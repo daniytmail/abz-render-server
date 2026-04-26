@@ -24,24 +24,26 @@ app.get('/', (req, res) => {
 // Resolve CSS variables to hard values in the HTML
 function resolveCssVars(html) {
   const vars = {
-    '--g':    '#6CB52F',
-    '--gd':   '#4A8A1F',
-    '--gs':   '#E8F5DA',
-    '--cr':   '#FAF7F2',
-    '--sa':   '#F0E9DC',
-    '--ink':  '#1A1A1A',
-    '--night':'#0F1A0A',
-    '--w':    '#FFFFFF',
+    '--g':          '#6CB52F',
+    '--gd':         '#4A8A1F',
+    '--gs':         '#E8F5DA',
+    '--cr':         '#FAF7F2',
+    '--sa':         '#F0E9DC',
+    '--ink':        '#1A1A1A',
+    '--night':      '#0F1A0A',
+    '--w':          '#FFFFFF',
     '--pill-momo':  '#6CB52F',
     '--pill-wiss':  '#2196A8',
     '--pill-frei':  '#E07A20',
     '--pill-throw': '#1565C0',
     '--pill-akt':   '#7B5EA7',
+    '--pill-aktu':  '#C0392B',
   };
-  // Replace var(--name) with hard value
   let result = html;
   for (const [name, value] of Object.entries(vars)) {
-    const regex = new RegExp(`var\\(\\s*${name.replace('-', '\\-')}\\s*\\)`, 'g');
+    // Escape all special regex chars in the variable name (especially hyphens)
+    const escaped = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    const regex = new RegExp(`var\\(\\s*${escaped}\\s*\\)`, 'g');
     result = result.replace(regex, value);
   }
   return result;
