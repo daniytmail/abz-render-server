@@ -99,11 +99,11 @@ app.post('/render', async (req, res) => {
     await page.evaluate(() => document.fonts.ready);
     await new Promise(r => setTimeout(r, 1000));
 
-    // Screenshot at full resolution — clip must use SCALED dimensions
+    // Screenshot at full resolution
     const png = await page.screenshot({
       type: 'png',
       encoding: 'base64',
-      clip: { x: 0, y: 0, width: PREVIEW_W * SCALE, height: PREVIEW_H * SCALE },
+      clip: { x: 0, y: 0, width: PREVIEW_W, height: PREVIEW_H },
     });
 
     res.json({ png });
