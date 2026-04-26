@@ -24,26 +24,24 @@ app.get('/', (req, res) => {
 // Resolve CSS variables to hard values in the HTML
 function resolveCssVars(html) {
   const vars = {
-    '--g':          '#6CB52F',
-    '--gd':         '#4A8A1F',
-    '--gs':         '#E8F5DA',
-    '--cr':         '#FAF7F2',
-    '--sa':         '#F0E9DC',
-    '--ink':        '#1A1A1A',
-    '--night':      '#0F1A0A',
-    '--w':          '#FFFFFF',
+    '--g':    '#6CB52F',
+    '--gd':   '#4A8A1F',
+    '--gs':   '#E8F5DA',
+    '--cr':   '#FAF7F2',
+    '--sa':   '#F0E9DC',
+    '--ink':  '#1A1A1A',
+    '--night':'#0F1A0A',
+    '--w':    '#FFFFFF',
     '--pill-momo':  '#6CB52F',
     '--pill-wiss':  '#2196A8',
     '--pill-frei':  '#E07A20',
     '--pill-throw': '#1565C0',
     '--pill-akt':   '#7B5EA7',
-    '--pill-aktu':  '#C0392B',
   };
+  // Replace var(--name) with hard value
   let result = html;
   for (const [name, value] of Object.entries(vars)) {
-    // Escape all special regex chars in the variable name (especially hyphens)
-    const escaped = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
-    const regex = new RegExp(`var\\(\\s*${escaped}\\s*\\)`, 'g');
+    const regex = new RegExp(`var\\(\\s*${name.replace('-', '\\-')}\\s*\\)`, 'g');
     result = result.replace(regex, value);
   }
   return result;
@@ -101,11 +99,11 @@ app.post('/render', async (req, res) => {
     await page.evaluate(() => document.fonts.ready);
     await new Promise(r => setTimeout(r, 1000));
 
-    // Screenshot at full resolution
+    // Screenshot at full resolution — clip must use SCALED dimensions
     const png = await page.screenshot({
       type: 'png',
       encoding: 'base64',
-      clip: { x: 0, y: 0, width: PREVIEW_W, height: PREVIEW_H },
+      clip: { x: 0, y: 0, width: PREVIEW_W * SCALE, height: PREVIEW_H * SCALE },
     });
 
     res.json({ png });
