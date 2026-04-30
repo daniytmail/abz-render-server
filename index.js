@@ -37,11 +37,13 @@ function resolveCssVars(html) {
     '--pill-frei':  '#E07A20',
     '--pill-throw': '#1565C0',
     '--pill-akt':   '#7B5EA7',
+    '--pill-aktu':  '#C0392B',
   };
   // Replace var(--name) with hard value
   let result = html;
   for (const [name, value] of Object.entries(vars)) {
-    const regex = new RegExp(`var\\(\\s*${name.replace('-', '\\-')}\\s*\\)`, 'g');
+    const escaped = name.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&');
+    const regex = new RegExp(`var\\(\\s*${escaped}\\s*\\)`, 'g');
     result = result.replace(regex, value);
   }
   return result;
@@ -103,7 +105,7 @@ app.post('/render', async (req, res) => {
     const png = await page.screenshot({
       type: 'png',
       encoding: 'base64',
-      clip: { x: 0, y: 0, width: PREVIEW_W, height: PREVIEW_H },
+      clip: { x: 0, y: 0, width: PREVIEW_W * SCALE, height: PREVIEW_H * SCALE },
     });
 
     res.json({ png });
