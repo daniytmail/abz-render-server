@@ -77,10 +77,14 @@ app.post('/render', async (req, res) => {
 
     const page = await browser.newPage();
 
+    const PREVIEW_W = 300;
+    const PREVIEW_H = 375;
+    const SCALE = width / PREVIEW_W; // 3.6
+
     await page.setViewport({
-      width: width,
-      height: height,
-      deviceScaleFactor: 1,
+      width: PREVIEW_W,
+      height: PREVIEW_H,
+      deviceScaleFactor: SCALE,
     });
 
     // Resolve CSS variables before sending to Puppeteer
@@ -98,7 +102,7 @@ app.post('/render', async (req, res) => {
     const png = await page.screenshot({
       type: 'png',
       encoding: 'base64',
-      clip: { x: 0, y: 0, width: width, height: height },
+      clip: { x: 0, y: 0, width: PREVIEW_W, height: PREVIEW_H },
     });
 
     res.json({ png });
