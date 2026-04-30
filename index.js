@@ -77,16 +77,10 @@ app.post('/render', async (req, res) => {
 
     const page = await browser.newPage();
 
-    // Set viewport to preview size, use deviceScaleFactor to scale up to export size
-    // 300×375 * 3.6 = 1080×1350
-    const PREVIEW_W = 300;
-    const PREVIEW_H = 375;
-    const SCALE = width / PREVIEW_W; // 3.6
-
     await page.setViewport({
-      width: PREVIEW_W,
-      height: PREVIEW_H,
-      deviceScaleFactor: SCALE,
+      width: width,
+      height: height,
+      deviceScaleFactor: 1,
     });
 
     // Resolve CSS variables before sending to Puppeteer
@@ -101,11 +95,10 @@ app.post('/render', async (req, res) => {
     await page.evaluate(() => document.fonts.ready);
     await new Promise(r => setTimeout(r, 1000));
 
-    // Screenshot at full resolution
     const png = await page.screenshot({
       type: 'png',
       encoding: 'base64',
-      clip: { x: 0, y: 0, width: PREVIEW_W * SCALE, height: PREVIEW_H * SCALE },
+      clip: { x: 0, y: 0, width: width, height: height },
     });
 
     res.json({ png });
